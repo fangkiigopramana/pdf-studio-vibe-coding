@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Studio — Editor PDF</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">📄</div>
+      PDF <span>Studio</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="clearAll()">🗑 Bersihkan Semua</button>
+      <button class="btn btn-primary" id="export-btn" onclick="exportPDF()" disabled>⬇ Export PDF</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h3>File PDF</h3>
+        <div id="file-list" class="file-list" style="max-height:240px; overflow-y:auto; padding:0; margin-bottom:0;">
+        </div>
+      </div>
+      <div style="padding:16px; border-bottom:1px solid var(--border);">
+        <button class="btn btn-secondary" style="width:100%;justify-content:center;" onclick="triggerMerge()">🔗
+          Gabungkan Semua File</button>
+      </div>
+      <div style="padding:16px; flex:1; overflow-y:auto;">
+        <p
+          style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">
+          Statistik</p>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="stats-panel">
+          <div style="display:flex;justify-content:space-between;font-size:13px;">
+            <span style="color:var(--muted)">Total Halaman</span>
+            <strong id="stat-pages">0</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;">
+            <span style="color:var(--muted)">Total File</span>
+            <strong id="stat-files">0</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;">
+            <span style="color:var(--muted)">Dipilih</span>
+            <strong id="stat-selected">0</strong>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="drop-zone" id="sidebar-drop" onclick="document.getElementById('file-input').click()">
+          <div class="icon">📂</div>
+          <p><strong>Klik atau seret</strong><br>file PDF ke sini</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Canvas Area -->
+    <div class="canvas-area">
+      <div class="toolbar">
+        <span class="toolbar-label">Halaman:</span>
+        <div class="toolbar-group">
+          <button class="btn btn-secondary btn-sm" onclick="selectAll()">☑ Pilih Semua</button>
+          <button class="btn btn-secondary btn-sm" onclick="deselectAll()">☐ Batal Pilih</button>
+        </div>
+        <div class="toolbar-divider"></div>
+        <div class="toolbar-group">
+          <button class="btn btn-ghost btn-sm" onclick="rotateSelected(90)" title="Rotate Kanan">↻ Kanan</button>
+          <button class="btn btn-ghost btn-sm" onclick="rotateSelected(-90)" title="Rotate Kiri">↺ Kiri</button>
+        </div>
+        <div class="toolbar-divider"></div>
+        <div class="toolbar-group">
+          <button class="btn btn-danger btn-sm" onclick="deleteSelected()">🗑 Hapus Dipilih</button>
+        </div>
+        <div class="toolbar-divider"></div>
+        <span class="page-info" id="page-count-label">0 halaman</span>
+      </div>
+
+      <div class="selection-bar" id="selection-bar">
+        <span id="selection-info">0 halaman dipilih</span>
+        <button class="btn btn-ghost btn-sm" onclick="rotateSelected(90)">↻ Rotate Kanan</button>
+        <button class="btn btn-ghost btn-sm" onclick="rotateSelected(-90)">↺ Rotate Kiri</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteSelected()">🗑 Hapus</button>
+        <button class="btn btn-ghost btn-sm" onclick="deselectAll()" style="margin-left:auto;">✕ Batal</button>
+      </div>
+
+      <div class="pages-container" id="pages-container">
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">📋</div>
+          <h2>Belum Ada PDF</h2>
+          <p>Tambahkan file PDF menggunakan panel di sebelah kiri untuk mulai mengedit.</p>
+          <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+            📂 Pilih File PDF
+          </button>
+        </div>
+        <div class="pages-grid" id="pages-grid" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p id="loading-text">Memproses...</p>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Hidden file input -->
+  <input type="file" id="file-input" accept=".pdf" multiple>
+  <script src="script.js"></script>
+</body>
+
+</html>
